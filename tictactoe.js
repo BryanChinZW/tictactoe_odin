@@ -7,12 +7,12 @@ function createPlayer(name){
   const tiles = []
   return {name,tiles}
 }
-function addPlayerTile(gameBoard,player){
-  const tile = gameBoard.index
-  if(tile.value == 0){
-    playerTiles = player.Tiles
-    playerTiles.push(index)
-    gameBoard.index = player.name
+function addPlayerTile(tileId,player,board){
+  const tile = board.gameBoard[tileId]
+  if(tile == 0){
+    var playerTiles = player.tiles
+    playerTiles.push(parseInt(tileId))
+    board.gameBoard[tileId] = player.name
     return true
   }else{
     return false
@@ -23,7 +23,6 @@ function horizontalWin(tilesNeededToWin){
   for(let i = 0;i<tilesNeededToWin; i++){
     var horizontalWinPosition = []
     position = tilesNeededToWin * i
-    console.log(position)
     if(i!=0){
       horizontalWinPosition.push(position)
     }else{
@@ -73,9 +72,9 @@ function acrossWin(tilesNeededToWin){
   return acrossWinPositions
 }
 
-function checkWinHorizontal(player,gameBoard){
+function checkWinHorizontal(player,board){
   const playerTiles = player.tiles
-  const horizontalWinPositions = horizontalWin(gameBoard.tilesNeededToWin)
+  const horizontalWinPositions = horizontalWin(board.tilesNeededToWin)
   var win = false;
   for(let i = 0;i<horizontalWinPositions.length;i++){
     var horizontalWinPosition = horizontalWinPositions[i]
@@ -85,14 +84,19 @@ function checkWinHorizontal(player,gameBoard){
         win = false;
       }
     }
+    if(win){
+      return win
+    }
   }
   return win
 }
-function checkWinVertical(player,gameBoard){
+
+function checkWinVertical(player,board){
   const playerTiles = player.tiles
-  const verticalWinPositions = verticalWin(gameBoard.tilesNeededToWin)
+  const verticalWinPositions = verticalWin(board.tilesNeededToWin)
   var win = false;
   for(let i = 0;i<verticalWinPositions.length;i++){
+ 
     var verticalWinPosition = verticalWinPositions[i]
     win = true
     for(let i = 0;i<verticalWinPosition.length;i++){
@@ -100,13 +104,16 @@ function checkWinVertical(player,gameBoard){
         win = false;
       }
     }
+    if(win){
+      return win
+    }
   }
   return win
 }
 
-function checkWinAcross(player,gameBoard){
+function checkWinAcross(player,board){
   const playerTiles = player.tiles
-  const acrossWinPositions = acrossWin(gameBoard.tilesNeededToWin)
+  const acrossWinPositions = acrossWin(board.tilesNeededToWin)
   var win = false;
   for(let i = 0;i<acrossWinPositions.length;i++){
     var acrossWinPosition = acrossWinPositions[i]
@@ -116,7 +123,58 @@ function checkWinAcross(player,gameBoard){
         win = false;
       }
     }
+    if(win){
+      return win
+    }
   }
   return win
 }
 
+function checkWin(player,board){
+  if(checkWinHorizontal(player,board)){
+    return true
+  }
+  if(checkWinVertical(player,board)){
+    return true
+  }
+  if(checkWinAcross(player,board)){
+    return true
+  }
+  return false
+}
+
+function createGame(){
+  const board = creatGameboard(3)
+  const player1 = createPlayer("player1")
+  const player2 = createPlayer("player2")
+  return {board,player1,player2}
+}
+
+var game = createGame()
+
+function clickTile(id){
+  tile = document.getElementById(id)
+  if(!tile.classList.contains("clicked")){
+    tile.classList.add("clicked");
+    player = document.getElementById("currentPlayer")
+    if(player.innerHTML == "Player 1"){
+      var tileSelected = addPlayerTile(id,game.player1,game.board)
+      if(tileSelected){
+        tile.classList.add("player1")
+        if(checkWin(game.player1,game.board)){
+            alert("player 1 won")
+        }
+        player.innerHTML = "Player 2"
+      }
+    }else{
+      var tileSelected = addPlayerTile(id,game.player2,game.board)
+      if(tileSelected){
+        tile.classList.add("player2")
+        if(checkWin(game.player2,game.board)){
+          alert("player 2 won")
+        }
+        player.innerHTML = "Player 1"
+      }
+    }
+  }
+}

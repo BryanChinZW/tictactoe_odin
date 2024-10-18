@@ -1,0 +1,21 @@
+.game{
+  background-color: whitesmoke;
+  width:500px;
+  height:500px;
+  display: grid;
+  grid-template-columns: auto auto auto ;
+  grid-template-rows: auto auto auto ;
+  gap:5px;
+}
+.tile{
+  box-shadow: 5px 10px;
+}
+.clicked{
+  box-shadow: 3px 5px;
+}
+.player1{
+  background-color: green;
+}
+.player2{
+  background-color: grey;
+}
